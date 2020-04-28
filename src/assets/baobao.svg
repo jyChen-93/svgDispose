@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1164.73 725.31">
+            <title>场馆图</title>
+            <path d="M886.55,253.12" transform="translate(-64 -49.69)" style="fill:none;stroke:#000;stroke-miterlimit:10;stroke-width:10px" />
+            <path d="M886.55,571.25" transform="translate(-64 -49.69)" style="fill:none;stroke:#000;stroke-miterlimit:10;stroke-width:10px" />
+            <path d="M411,258.34V566c59.49-2.51,147.27-3.77,235-3.77s175.46,1.26,235,3.77V258.35C762,263.37,530,263.37,411,258.34Z" transform="translate(-64 -49.69)" style="fill:#ccc" />
+            <path d="M886.32,248.12c60.22-2.69,200.56-16.15,289.1-25C1111.48,119.28,996.73,49.69,866.5,49.69h-440c-130.23,0-245,69.59-308.92,173.43,88.55,8.85,228.88,22.31,289.1,25C525.47,253.45,767.53,253.45,886.32,248.12Z" transform="translate(-64 -49.69)" style="fill:#f2f2f2" />
+            <text transform="translate(552.67 111.91)" style="pointer-events:none;font-size:36px;font-family:PingFang-SC-Medium, PingFang SC;font-weight:500">A区</text>
+            <path d="M406.68,576.56c-60.22,2.7-200.56,16.16-289.1,25C181.52,705.4,296.27,775,426.5,775h440c130.23,0,245-69.6,308.92-173.43-88.54-8.85-228.88-22.31-289.1-25C767.53,571.24,525.47,571.24,406.68,576.56Z" transform="translate(-64 -49.69)" style="fill:#f2f2f2" />
+            <text transform="translate(551.4 634.79)" style="pointer-events:none;font-size:36px;font-family:PingFang-SC-Medium, PingFang SC;font-weight:500">C区</text>
+            <path d="M111.93,232.6A359.42,359.42,0,0,0,64,412.19h0a359.41,359.41,0,0,0,47.93,179.58c86.11-8.62,225.61-22.06,289.52-25.28V257.89C337.54,254.67,198,241.23,111.93,232.6Z" transform="translate(-64 -49.69)" style="fill:#f2f2f2" />
+            <text transform="translate(138.54 373.19)" style="pointer-events:none;font-size:36px;font-family:PingFang-SC-Medium, PingFang SC;font-weight:500">B区</text>
+            <path d="M1180.59,232.46c-86.14,8.73-225.72,22.35-289.59,25.63l.37,308.6c63.87,3.13,203.49,16.41,289.65,24.94A359.38,359.38,0,0,0,1228.73,412h0A359.45,359.45,0,0,0,1180.59,232.46Z" transform="translate(-64 -49.69)" style="fill:#f2f2f2" />
+            <text transform="translate(965.16 373.05)" style="pointer-events:none;font-size:36px;font-family:PingFang-SC-Medium, PingFang SC;font-weight:500">D区</text>
+        </svg>

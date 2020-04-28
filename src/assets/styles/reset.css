@@ -1,0 +1,463 @@
+@charset 'utf-8';
+
+html {
+    overflow-x: hidden;
+    overflow-y: auto;
+    width: 100%;
+    height: 100%;
+    /* background-color: #2A105A; */
+}
+
+/* 英文 */
+.qr-warp-c canvas {
+    position: absolute;
+    top: 2px;
+    left: 2px;
+}
+
+body {
+    font-family: 'Microsoft YaHei', 微软雅黑, 'PingFangSC', 'Arial', 'Verdana',
+        'SimHei', 黑体;
+    /* font-family: 'Microsoft YaHei', 'Avenir', Helvetica, Arial, sans-serif; */
+    font-size: 14px;
+    /* font-family: 'Raleway-Regular','Microsoft YaHei'; */
+    overflow-x: hidden;
+    /* height: 100px; */
+    width: 100%;
+    color: #000;
+    /* background-image: url(../img/g_bg.png);
+  background-size: 100%; */
+    /* background-color: red; */
+}
+
+body,
+dd,
+dl,
+fieldset,
+form,
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+input,
+legend,
+p,
+select,
+textarea,
+ul {
+    /* font-size: inherit; */
+    font-weight: normal;
+    font-style: inherit;
+    margin: 0;
+    padding: 0;
+    vertical-align: baseline;
+    text-decoration: none;
+    border: 0;
+    outline: 0;
+}
+
+li {
+    list-style: none;
+}
+
+ol li {
+    list-style-type: decimal;
+}
+
+a,
+del,
+s,
+u {
+    text-decoration: none;
+    color: #000;
+}
+
+a:link,
+a:visited {
+    text-decoration: none;
+}
+
+/* table {
+  border-spacing: 0;
+  border-collapse: collapse;
+} */
+b,
+em,
+i {
+    font-weight: normal;
+    font-style: normal;
+}
+
+button {
+    /* display: block; */
+    margin: 0;
+    padding: 0;
+    border: none;
+    background: none;
+}
+
+input {
+    -webkit-user-select: text;
+    border: none;
+    border-style: none;
+    outline-width: 0;
+    outline-style: none;
+    outline-color: invert;
+    outline-color: transparent;
+    box-shadow: none;
+    text-shadow: none;
+    -webkit-appearance: none;
+}
+
+input,
+textarea {
+    resize: none;
+    outline: 0;
+}
+
+/* img {
+    display: block;
+    width: 100%;
+} */
+p {
+    word-wrap: break-word;
+}
+
+.czjz:after,
+img {
+    vertical-align: middle;
+}
+
+.czjz:after {
+    display: inline-block;
+    width: 0;
+    height: 100%;
+}
+
+.bd0,
+.txt,
+img {
+    border: 0;
+}
+
+.left {
+    float: left;
+}
+
+.right {
+    float: right;
+}
+
+.ind {
+    text-indent: 2em;
+}
+
+.ind999 {
+    text-indent: -9999px;
+}
+
+.over {
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+}
+
+.clear:after,
+.czjz:after {
+    content: '';
+}
+
+.clear:before {
+    display: table;
+    content: ' ';
+}
+
+.clear:after {
+    display: table;
+    clear: both;
+    content: ' ';
+}
+
+/* IE 6/7 */
+.clear {
+    zoom: 1;
+}
+
+/* 修改input提示文字内边距 */
+input::-webkit-input-placeholder {
+    /* WebKit browsers */
+    /* padding-top: 2px; */
+}
+
+input:-moz-placeholder {
+    /* Mozilla Firefox 4 to 18 */
+    /* padding-top: 2px; */
+}
+
+input:-ms-input-placeholder {
+    /* Internet Explorer 10 */
+    /* padding-top: 2px; */
+}
+
+input::placeholder {
+    /* padding-top: 2px; */
+}
+
+/* 清除移动端点击时的灰色半透明背景 */
+a,
+img,
+button,
+input,
+textarea {
+    -webkit-tap-highlight-color: rgba(255, 255, 255, 0);
+}
+
+input {
+    border: none;
+    background: none;
+    appearance: none;
+}
+
+/* 手机中点击链接或button按钮出现黄色边框的解决办法 */
+a,
+input,
+button {
+    outline: none;
+    -webkit-tap-highlight-color: rgba(255, 255, 255, 0);
+    -webkit-focus-ring-color: rgba(0, 0, 0, 0);
+}
+
+select {
+    /* 将背景改为红色 */
+    /* 加padding防止文字覆盖 */
+    padding-right: 14px;
+    text-align: center;
+    opacity: 0;
+    /* Chrome和Firefox里面的边框是不一样的，所以复写了一下 */
+    border: none;
+    /* 很关键：将默认的select选择框样式清除 */
+    appearance: none;
+    -moz-appearance: none;
+    -webkit-appearance: none;
+}
+
+/* 清除ie的默认选择框样式清除，隐藏下拉箭头 */
+select::-ms-expand {
+    display: none;
+}
+
+button {
+    cursor: pointer;
+}
+
+/* .video-warp-warp {
+  position: relative;
+  min-height: 50vw;
+}
+
+.video-warp-2 {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  top: 0;
+  left: 0;
+}
+
+video {
+  position: absolute;
+  display: block;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: #000;
+} */
+.waiting {
+    font-size: 30px;
+    font-weight: bold;
+    padding: 30px 0;
+    text-align: center;
+}
+
+.diandian {
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+}
+
+/* 手势 */
+.cus {
+    cursor: pointer;
+}
+
+/* 头部的高度 */
+.pt-h {
+    padding-top: 120px;
+}
+
+.pb-f {
+    padding-bottom: 120px;
+}
+
+/* 1200px 居中 */
+.w-1200 {
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.w-960 {
+    max-width: 960px;
+    margin: 0 auto;
+}
+
+.w-960-2 {
+    max-width: 980px;
+    margin: 0 auto;
+}
+
+.over {
+    overflow: hidden;
+}
+
+.pl-10 {
+    padding-left: 10px;
+}
+
+.pt-80 {
+    padding-top: 80px !important;
+}
+
+.pb-80 {
+    padding-bottom: 80px !important;
+}
+
+.ptb-80 {
+    padding-top: 50px !important;
+    padding-bottom: 50px !important;
+}
+
+.pt-50 {
+    padding-top: 50px !important;
+}
+
+.pb-50 {
+    padding-bottom: 50px !important;
+}
+
+.ptb-50 {
+    padding-top: 50px !important;
+    padding-bottom: 50px !important;
+}
+
+.pt-60 {
+    padding-top: 60px !important;
+}
+
+.pb-60 {
+    padding-bottom: 60px !important;
+}
+
+.ptb-60 {
+    padding-top: 60px !important;
+    padding-bottom: 60px !important;
+}
+
+.pt-40 {
+    padding-top: 40px !important;
+}
+
+.pb-40 {
+    padding-bottom: 40px !important;
+}
+
+.pb-100 {
+    padding-bottom: 100px;
+}
+
+.ptb-40 {
+    padding-top: 40px !important;
+    padding-bottom: 40px !important;
+}
+
+.pt-30 {
+    padding-top: 30px !important;
+}
+
+.pb-30 {
+    padding-bottom: 30px !important;
+}
+
+.ptb-30 {
+    padding-top: 30px !important;
+    padding-bottom: 30px !important;
+}
+
+.pt-20 {
+    padding-top: 20px !important;
+}
+
+.pb-20 {
+    padding-bottom: 20px !important;
+}
+
+.ptb-20 {
+    padding-top: 20px !important;
+    padding-bottom: 20px !important;
+}
+
+.pt-10 {
+    padding-top: 10px !important;
+}
+
+.pb-10 {
+    padding-bottom: 10px !important;
+}
+
+.mb-30 {
+    margin-bottom: 30px !important;
+}
+
+.mb-20 {
+    margin-bottom: 20px !important;
+}
+
+.mt-10 {
+    margin-top: 10px !important;
+}
+
+.mt-30 {
+    margin-top: 30px !important;
+}
+
+.mtb-30 {
+    margin-top: 30px !important;
+    margin-bottom: 30px !important;
+}
+
+.mb-40 {
+    margin-bottom: 40px !important;
+}
+
+.mt-40 {
+    margin-top: 40px !important;
+}
+
+.mb-60 {
+    margin-bottom: 60px !important;
+}
+
+.mtb-40 {
+    margin-top: 40px !important;
+    margin-bottom: 40px !important;
+}
+
+.mt-60 {
+    margin-top: 60px !important;
+}
+
+.mt-0 {
+    margin-top: 0 !important;
+}
