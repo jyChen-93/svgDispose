@@ -18,7 +18,7 @@ const SeatMobile = resolve => require(["@/views/seat_mobile.vue"], resolve);
 
 const routes = [{
         path: "*",
-        redirect: "/seat_mobile" //重定向
+        redirect: "/svg_to_svg" //重定向
     },
     {
         path: "/seat_mobile",
