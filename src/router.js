@@ -13,11 +13,17 @@ const SvgtoCanvas = resolve => require(["@/views/svg_to_canvas.vue"], resolve);
 const SvgtoSvg = resolve => require(["@/views/svg_to_svg.vue"], resolve);
 const MySvg = resolve => require(["@/views/mg_svg.vue"], resolve);
 const OffCanvas = resolve => require(["@/views/offCanvas.vue"], resolve);
+const SeatMobile = resolve => require(["@/views/seat_mobile.vue"], resolve);
 
 
 const routes = [{
         path: "*",
-        redirect: "/svg_to_svg" //重定向
+        redirect: "/seat_mobile" //重定向
+    },
+    {
+        path: "/seat_mobile",
+        name: "SeatMobile",
+        component: SeatMobile
     },
     {
         path: "/test",

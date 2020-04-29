@@ -15,7 +15,7 @@
 		//- 操作区域
 		.active-area(ref="activeArea" )
 			.active-top(:style="{height:activeTop+'px'}")
-				p shapeId:{{checkedShape.shapeId}}  cols:{{checkedShape.cols}}  rows:{{checkedShape.rows}}
+				p shapeId:{{checkedShape.shapeId}}  cols:{{checkedShape.cols}}  rows:{{checkedShape.rows}} 横向排序方向：{{checkedShape.orderRow==0?"逆时针":"顺时针"}} 竖直排序方向：{{checkedShape.orderCol==0?"由里向外":"由外向里"}}
 				.btns
 					button(@click="toChangeShapeInfo") 修改区域座位信息
 					button(@click="addSeat",:disabled="selectedSeatList.length==0") 添加座位
@@ -47,12 +47,12 @@
 				input(type="number" v-model.number="checkedShapePopData.startCol")
 			h4
 				span 横向排序方向：
-				em.radio(:class="{'checked':checkedShapePopData.orderRow==0}" @click="checkedShapePopData.orderRow=0") 逆时针
-				em.radio(:class="{'checked':checkedShapePopData.orderRow==1}" @click="checkedShapePopData.orderRow=1") 顺时针
+				em.radio(:class="{'checked':checkedShapePopData.orderRow===0}" @click="checkedShapePopData.orderRow=0") 逆时针
+				em.radio(:class="{'checked':checkedShapePopData.orderRow===1}" @click="checkedShapePopData.orderRow=1") 顺时针
 			h4
 				span 竖直排序方向：
-				em.radio( :class="{'checked':checkedShape.orderCol==0}" @click="checkedShapePopData.orderCol=0") 由里向外
-				em.radio( :class="{'checked':checkedShapePopData.orderCol==1}" @click="checkedShapePopData.orderCol=1") 由外向里
+				em.radio(:class="{'checked':checkedShapePopData.orderCol===0}" @click="checkedShapePopData.orderCol=0") 由里向外
+				em.radio(:class="{'checked':checkedShapePopData.orderCol===1}" @click="checkedShapePopData.orderCol=1") 由外向里
 			h4
 				button(@click="checkedShapeSeatComfrim") 确认
 				button(@click="checkedShapeSeatCancle") 取消
@@ -465,23 +465,82 @@ export default {
         },
         orderSeats(shape) { //排座
             let seats = shape.seats;
-            let rowString = 0;
-            for (let row = 0; row < shape.rows; row++) {
-                //只有当整行没有任何座位的时候才不计算
-                let count = 0;
-                for (let col = 0; col < shape.cols; col++) {
-                    if (seats[row][col].status != -1) count += 1;
+            let seatList = []
+            if (shape.orderCol == 0) { //从里向外，设置横列
+                let rowNum = 0
+                //设置横列
+                for (let row = 0; row < shape.rows; row++) {
+                    let rowList = [];
+                    let count = 0;
+                    for (let col = 0; col < shape.cols; col++) {
+                        if (seats[row][col].status != -1) count += 1;
+                    }
+                    if (count != 0) rowNum += 1;
+
+                    //设置纵列
+                    if (shape.orderRow == 0) { //逆时针，设置纵列
+                        let colNum = 0;
+                        for (let col = 0; col < shape.cols; col++) {
+                            let seatInfo = seats[row][col];
+                            seatInfo.rowString = shape.orderRow + rowNum
+                            if (seatInfo.status != -1) {
+                                colNum += 1;
+                                seatInfo.colString = shape.orderCol + colNum
+                            } else {
+                                seatInfo.colString = "-1"
+                            }
+                        }
+                    } else if (shape.orderRow == 1) { //顺势针，设置纵列
+                        let colNum = -1;
+                        for (let col = shape.cols - 1; col > -1; col--) {
+                            let seatInfo = seats[row][col];
+                            seatInfo.rowString = shape.orderRow + rowNum
+                            if (seatInfo.status != -1) {
+                                colNum += 1;
+                                seatInfo.colString = shape.orderCol + colNum
+                            } else {
+                                seatInfo.colString = "-1"
+                            }
+                        }
+                    }
                 }
-                if (count != 0) rowString += 1;
-                let colString = 0;
-                for (let col = 0; col < shape.cols; col++) {
-                    let seatInfo = seats[row][col];
-                    seatInfo.rowString = rowString
-                    if (seatInfo.status != -1) {
-                        colString += 1;
-                        seatInfo.colString = colString
-                    } else {
-                        seatInfo.colString = "-1"
+
+            } else if (shape.orderCol == 1) { //从外向里，设置横列
+                let rowNum = -1
+                //设置横列
+                for (let row = shape.rows - 1; row > -1; row--) {
+                    let rowList = [];
+                    let count = 0;
+                    for (let col = 0; col < shape.cols; col++) {
+                        if (seats[row][col].status != -1) count += 1;
+                    }
+                    if (count != 0) rowNum += 1;
+
+                    //设置纵列
+                    if (shape.orderRow == 0) { //逆时针，设置纵列
+                        let colNum = 0;
+                        for (let col = 0; col < shape.cols; col++) {
+                            let seatInfo = seats[row][col];
+                            seatInfo.rowString = shape.orderRow + rowNum
+                            if (seatInfo.status != -1) {
+                                colNum += 1;
+                                seatInfo.colString = shape.orderCol + colNum
+                            } else {
+                                seatInfo.colString = "-1"
+                            }
+                        }
+                    } else if (shape.orderRow == 1) { //顺势针，设置纵列
+                        let colNum = -1;
+                        for (let col = shape.cols - 1; col > -1; col--) {
+                            let seatInfo = seats[row][col];
+                            seatInfo.rowString = shape.orderRow + rowNum
+                            if (seatInfo.status != -1) {
+                                colNum += 1;
+                                seatInfo.colString = shape.orderCol + colNum
+                            } else {
+                                seatInfo.colString = "-1"
+                            }
+                        }
                     }
                 }
             }
@@ -721,67 +780,91 @@ export default {
             let shape = {
                 ...this.checkedShapePopData
             };
+            let seatList = []
             //生成座位
             let seatIdStart = 0;
-            shape.seats = [];
-            //先循环行，再循环列
-            if (shape.orderRow == 0) { //逆时针
-                for (let i = 0; i < shape.rows; i++) {
-                    let rowList = [];
-                    if (shape.orderCol == 0) { //从里向外
-                        for (let j = 0; j < shape.cols; j++) {
-                            let seat = {
-                                seatId: seatIdStart++,
-                                status: 0,
-                                rowString: shape.startRow + i,
-                                colString: shape.startCol + j,
-                                level: 0
-                            }
-                            rowList.push(seat);
-                        }
-                    } else { //反向
-                        for (let j = shape.cols - 1; j > -1; j--) {
-                            let seat = {
-                                seatId: seatIdStart++,
-                                status: 0,
-                                rowString: shape.startRow + i,
-                                colString: shape.startCol + j,
-                                level: 0
-                            }
-                            rowList.push(seat);
-                        }
-                    }
-                    shape.seats.push(rowList)
-                }
-            } else { //顺时针
-                for (let i = shape.rows - 1; i > -1; i--) {
-                    let rowList = [];
-                    if (shape.orderCol == 0) { //从里向外
-                        for (let j = 0; j < shape.cols; j++) {
-                            let seat = {
-                                seatId: seatIdStart++,
-                                status: 0,
-                                rowString: shape.startRow + i,
-                                colString: shape.startCol + j,
-                                level: 0
-                            }
-                            rowList.push(seat);
-                        }
-                    } else { //反向
-                        for (let j = shape.cols - 1; j > -1; j--) {
-                            let seat = {
-                                seatId: seatIdStart++,
-                                status: 0,
-                                rowString: shape.startRow + i,
-                                colString: shape.startCol + j,
-                                level: 0
-                            }
-                            rowList.push(seat);
-                        }
-                    }
-                    shape.seats.push(rowList)
-                }
+            let seat = {
+                seatId: "",
+                status: 0,
+                rowString: "",
+                colString: "",
+                level: 0
             }
+            //先循环行，再循环列
+            for (let row = 0; row < shape.rows; row++) {
+                let rowList = [];
+                for (let col = 0; col < shape.cols; col++) {
+                    seat.seatId = shapeId + (seatIdStart++)
+                    seat.colString = shape.orderCol + col;
+                    rowList.push({
+                        ...seat
+                    })
+                }
+                seatList.push(rowList)
+            }
+
+            shape.seats = seatList;
+            //排坐好之后再赋值
+            shape = this.orderSeats({
+                ...shape
+            })
+            // if (shape.orderRow == 0) { //逆时针
+            //     for (let i = 0; i < shape.rows; i++) {
+            //         let rowList = [];
+            //         if (shape.orderCol == 0) { //从里向外
+            //             for (let j = 0; j < shape.cols; j++) {
+            //                 let seat = {
+            //                     seatId: shape.shapeId + "_" + seatIdStart++,
+            //                     status: 0,
+            //                     rowString: shape.startRow + i,
+            //                     colString: shape.startCol + j,
+            //                     level: 0
+            //                 }
+            //                 rowList.push(seat);
+            //             }
+            //         } else { //反向
+            //             for (let j = shape.cols - 1; j > -1; j--) {
+            //                 let seat = {
+            //                     seatId: shape.shapeId + "_" + seatIdStart++,
+            //                     status: 0,
+            //                     rowString: shape.startRow + i,
+            //                     colString: shape.startCol + j,
+            //                     level: 0
+            //                 }
+            //                 rowList.push(seat);
+            //             }
+            //         }
+            //         shape.seats.push(rowList)
+            //     }
+            // } else { //顺时针
+            //     for (let i = shape.rows - 1; i > -1; i--) {
+            //         let rowList = [];
+            //         if (shape.orderCol == 0) { //从里向外
+            //             for (let j = 0; j < shape.cols; j++) {
+            //                 let seat = {
+            //                     seatId: shape.shapeId + "_" + seatIdStart++,
+            //                     status: 0,
+            //                     rowString: shape.startRow + i,
+            //                     colString: shape.startCol + j,
+            //                     level: 0
+            //                 }
+            //                 rowList.push(seat);
+            //             }
+            //         } else { //反向
+            //             for (let j = shape.cols - 1; j > -1; j--) {
+            //                 let seat = {
+            //                     seatId: shape.shapeId + "_" + seatIdStart++,
+            //                     status: 0,
+            //                     rowString: shape.startRow + i,
+            //                     colString: shape.startCol + j,
+            //                     level: 0
+            //                 }
+            //                 rowList.push(seat);
+            //             }
+            //         }
+            //         shape.seats.push(rowList)
+            //     }
+            // }
             //把数据保存到shapeList中
             let shapeId = shape.shapeId;
             let shapeIds = this.shapeList.map(item => item.shapeId);
@@ -800,9 +883,7 @@ export default {
             this.checkedShape = {
                 ...shape
             }
-            this.checkedShape = this.orderSeats({
-                ...this.checkedShape
-            })
+
         },
         toChangeShapeInfo() {
             if (this.checkedShape.shapeId == null) {
@@ -892,17 +973,18 @@ div {
     }
     .content {
         height: 400px;
+        max-height: 100%;
         width: 100%;
-        overflow: hidden;
+        overflow: auto;
         position: relative;
         top: 50%;
         transform: translateY(-50%);
         margin: 0 auto;
         box-sizing: border-box;
         .svg-warp {
-            position: absolute;
-            top: 0;
-            left: 0;
+            // position: absolute;
+            // top: 0;
+            // left: 0;
             background-color: #bbbcbe;
 
             &.showCanvas {

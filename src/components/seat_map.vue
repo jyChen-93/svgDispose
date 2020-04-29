@@ -1,6 +1,7 @@
 <template lang="pug">
 .warp
 	div(style="display:none;")
+		img( ref="iconDraw" src="../assets/seat_icon_checked_draw.svg" alt="" sizes="" srcset="" id="500")
 		img( ref="iconChecked" src="../assets/seat_icon_checked.svg" alt="" sizes="" srcset="")
 		img( ref="iconShow" src="../assets/seat_icon_show.svg" alt="" sizes="" srcset="" id="500")
 	.mini-map(ref="miniMap" :style="{width:miniMap.width+'px',height:miniMap.height+'px'}" v-show="miniMap.show")
@@ -102,6 +103,7 @@ export default {
             },
 
             svg: "",
+            checkedSvg: "",
 
             maxWidth: 0,
             maxHeight: 0,
@@ -134,13 +136,14 @@ export default {
             seatIcon: { //座位图标
                 iconShow: "",
                 iconChecked: "",
+                iconDraw: "",
                 width: 0,
                 height: 0,
                 marginRight: 0,
                 marginBottom: 0,
                 diagonalLine: 0, //正方形对角线的长度
-                realWidth: 20,
-                realHeight: 20,
+                realWidth: 25,
+                realHeight: 25,
                 realMarginRight: 8,
                 realMarginBottom: 8
             },
@@ -174,7 +177,8 @@ export default {
                 // }
             ],
             renderList: [], //已经渲染的shape
-            viewBoxList: [] //当前可视区域内的shape
+            viewBoxList: [], //当前可视区域内的shape
+            checkedSeatList: [], //选中的座位
         };
     },
     computed: {
@@ -269,20 +273,14 @@ export default {
             this.scaleMax = parseFloat(localStorage.getItem("scaleMax"))
         }
         this.wheelMaxBackUp = this.scaleMax;
-        this.seatIcon.width = this.seatIcon.realWidth / this.scaleMax
-        this.seatIcon.height = this.seatIcon.realHeight / this.scaleMax
-        this.seatIcon.marginRight = this.seatIcon.realMarginRight / this.scaleMax
-        this.seatIcon.marginBottom = this.seatIcon.realMarginBottom / this.scaleMax
-        //计算出正方形对角线的长度
-        this.seatIcon.diagonalLine = Math.pow((this.seatIcon.width / 2) * (this.seatIcon.width / 2) * 2, 0.5);
-        // this.canvasInit();
+        this.calcSeatIconBaseData(this.scaleMax)
     },
     mounted() {
         //座位图标初始化
-        this.seatIconInit();
         this.svg = _svg;
         this.$nextTick(() => {
             this.svgInit();
+            this.seatIconInit();
         });
     },
     beforeDestroy() {
@@ -292,6 +290,24 @@ export default {
         updateInputNumberVal(number) { //input_number组件更新数据
             this.wheelMaxBackUp = number;
         },
+        calcSeatIconBaseData(scaleMax) { //根据sclaeMax计算基础
+            this.seatIcon.width = this.seatIcon.realWidth / scaleMax
+            this.seatIcon.height = this.seatIcon.realHeight / scaleMax
+            this.seatIcon.marginRight = this.seatIcon.realMarginRight / scaleMax
+            this.seatIcon.marginBottom = this.seatIcon.realMarginBottom / scaleMax
+            //计算出正方形对角线的长度
+            this.seatIcon.diagonalLine = Math.pow((this.seatIcon.width / 2) * (this.seatIcon.width / 2) * 2, 0.5);
+        },
+        calcSvgCanvasBaseData(scaleMax) {
+            //缩放基础数据计算
+            this.maxWidth = this.center.x * 2 * scaleMax;
+            this.maxHeight = this.center.y * 2 * scaleMax;
+            this.wheelMin = this.floatTwo(this.cont.width / this.maxWidth);
+            //canvas的最大尽量接近2000*2000
+            this.canvasSplit.col = Math.ceil(this.maxWidth / 2000)
+            this.canvasSplit.row = Math.ceil(this.maxHeight / 2000)
+            this.canvasInit()
+        },
         comfrimSizeChange() { //确认修改画布大小
             if (this.checkedShape.shapeId === null) {
                 alert("请先双击选择需要观察的图形");
@@ -300,22 +316,11 @@ export default {
             this.scaleMax = this.wheelMaxBackUp;
             //保存数据
             localStorage.setItem("scaleMax", this.scaleMax);
-            this.seatIcon.width = this.seatIcon.realWidth / this.scaleMax
-            this.seatIcon.height = this.seatIcon.realHeight / this.scaleMax
-            this.seatIcon.marginRight = this.seatIcon.realMarginRight / this.scaleMax
-            this.seatIcon.marginBottom = this.seatIcon.realMarginBottom / this.scaleMax
-            //计算出正方形对角线的长度
-            this.seatIcon.diagonalLine = Math.pow((this.seatIcon.width / 2) * (this.seatIcon.width / 2) * 2, 0.5);
 
-            // //缩放基础数据重新计算
-            this.maxWidth = this.center.x * 2 * this.scaleMax;
-            this.maxHeight = this.center.y * 2 * this.scaleMax;
-            this.wheelMin = this.floatTwo(this.cont.width / this.maxWidth);
-            //canvas的最大尽量接近2000*2000
-            this.canvasSplit.col = Math.ceil(this.maxWidth / 2000)
-            this.canvasSplit.row = Math.ceil(this.maxHeight / 2000)
-            this.canvasInit()
-            this.$nextTick(() => this.clickToMax(this.checkedShape, this.wheelNum))
+            this.calcSeatIconBaseData(this.scaleMax)
+            this.calcSvgCanvasBaseData(this.scaleMax)
+
+            this.$nextTick(() => this.clickToMax(this.checkedShape, this.wheelNum < this.wheelShow ? this.wheelShow : this.wheelNum))
 
         },
         canvasInit() { //根据切割canvas的行和列计算出canvas有多少个
@@ -416,18 +421,8 @@ export default {
                 y: parseFloat(viewBox[3]) / 2
             }
             //根据宽高比计算出content的高度
-            this.warpInit(this.center);
-
-            //缩放基础数据计算
-            this.maxWidth = this.center.x * 2 * this.scaleMax;
-            this.maxHeight = this.center.y * 2 * this.scaleMax;
-            this.wheelMin = this.floatTwo(this.cont.width / this.maxWidth);
-
-            //canvas的最大尽量接近2000*2000
-            this.canvasSplit.col = Math.ceil(this.maxWidth / 2000)
-            this.canvasSplit.row = Math.ceil(this.maxHeight / 2000)
-            this.canvasInit()
-
+            this.warpInit();
+            this.calcSvgCanvasBaseData(this.scaleMax)
             //根据内容框缩放到合适的大小
             this.setSvgAndCanvas(this.wheelMin);
             this.setCheckBox();
@@ -524,6 +519,25 @@ export default {
                     } else if (shape.seats[j][i].status == 1) {
                         canvasItem.ctx.beginPath();
                         canvasItem.ctx.drawImage(this.seatIcon.iconChecked, real_x, real_y, this.seatIcon.width * this.wheelPow, this.seatIcon.height * this.wheelPow);
+                        canvasItem.ctx.drawImage(this.seatIcon.iconDraw, real_x, real_y, this.seatIcon.width * this.wheelPow, this.seatIcon.height * this.wheelPow);
+
+                        // canvasItem.ctx.beginPath();
+                        // canvasItem.ctx.restore();
+                        // let half = (this.seatIcon.width + this.seatIcon.marginRight) * this.wheelPow / 2
+                        // let total = (this.seatIcon.width + this.seatIcon.marginRight) * this.wheelPow
+                        // let draw_x = real_x + half;
+                        // let draw_y = real_y + half;
+                        // let rotatePoint = TOOLS.rotatePoint([tanr_x, tanr_y], [real_x, real_y], -shape.angle);
+                        // let mathC = Math.sin(-shape.angle * Math.PI / 180)
+                        // console.log(mathC)
+                        // canvasItem.ctx.drawImage(this.seatIcon.iconDraw,
+                        //     // real_x,
+                        //     // real_y,
+                        //     rotatePoint[0] - total * mathC,
+                        //     rotatePoint[1] - total * mathC,
+                        //     // rotatePoint[0],
+                        //     // rotatePoint[1],
+                        //     this.seatIcon.width * this.wheelPow, this.seatIcon.height * this.wheelPow);
                     }
                 })
                 canvasItem.ctx.restore();
@@ -688,6 +702,7 @@ export default {
                         } else if (shape.seats[j][i].status == 1) {
                             canvasItem.ctx.beginPath();
                             canvasItem.ctx.drawImage(this.seatIcon.iconChecked, real_x, real_y, this.seatIcon.width * this.wheelPow, this.seatIcon.height * this.wheelPow);
+                            canvasItem.ctx.drawImage(this.seatIcon.iconDraw, real_x, real_y, this.seatIcon.width * this.wheelPow, this.seatIcon.height * this.wheelPow);
                         }
                         // }
                     }
@@ -774,9 +789,6 @@ export default {
                         this.clickToMax(shapeObj, this.wheelNum < this.wheelShow ? this.wheelShow : this.wheelNum);
                     } else {
                         //选中的是当前checkedShape，判定为选中座位
-                        if (shapeObj.rows == 0 || shapeObj.cols == 0) {
-                            // this.checkedShapeShow = true;
-                        }
                         //如果没有返回座位下标信息，就判定为点击的shape
                         let seat = this.checkOnSeat(shapeObj, clickPoint);
                         if (seat.length != 0) {
@@ -786,15 +798,20 @@ export default {
                                 return false;
                             } else if (seatInfo.status == 0) {
                                 seatInfo.status = 1;
+                                //添加
+                                //checkedSeatList如果存在就表明是取消事件
+                                this.checkedSeatList.push({
+                                    ...seatInfo
+                                })
                             } else if (seatInfo.status == 1) {
                                 seatInfo.status = 0;
+                                //取消选中
+                                let seatIds = this.checkedSeatList.map(item => item.seatId);
+                                this.$delete(this.checkedSeatList, seatIds.indexOf(seatInfo.seatId));
                             }
                             this.shapeList[shapeIndex].seats[seat[0]][seat[1]].status = seatInfo.status;
                             //更新单个座位的渲染状态
                             this.updateShapeSeatStatus(this.shapeList[shapeIndex], [seat])
-                            // this.$set(this.shapeList, shapeIndex, {
-                            //     ...shapeObj
-                            // });
                             // console.log(seatInfo.rowString, seatInfo.colString)
                         }
                     }
@@ -898,6 +915,13 @@ export default {
             //生成座位
             let seatIdStart = 0;
             shape.seats = [];
+            /*
+            seatId: shape.shapeId + seatIdStart++,
+            status: 0,
+            rowString: shape.startRow + i,
+            colString: shape.startCol + j,
+            level: 0
+             */
             //先循环行，再循环列
             if (shape.orderRow == 0) { //逆时针
                 for (let i = 0; i < shape.rows; i++) {
@@ -905,7 +929,7 @@ export default {
                     if (shape.orderCol == 0) { //从里向外
                         for (let j = 0; j < shape.cols; j++) {
                             let seat = {
-                                seatId: seatIdStart++,
+                                seatId: shape.shapeId + seatIdStart++,
                                 status: 0,
                                 rowString: shape.startRow + i,
                                 colString: shape.startCol + j,
@@ -916,7 +940,7 @@ export default {
                     } else { //反向
                         for (let j = shape.cols - 1; j > -1; j--) {
                             let seat = {
-                                seatId: seatIdStart++,
+                                seatId: shape.shapeId + seatIdStart++,
                                 status: 0,
                                 rowString: shape.startRow + i,
                                 colString: shape.startCol + j,
@@ -933,7 +957,7 @@ export default {
                     if (shape.orderCol == 0) { //从里向外
                         for (let j = 0; j < shape.cols; j++) {
                             let seat = {
-                                seatId: seatIdStart++,
+                                seatId: shape.shapeId + seatIdStart++,
                                 status: 0,
                                 rowString: shape.startRow + i,
                                 colString: shape.startCol + j,
@@ -944,7 +968,7 @@ export default {
                     } else { //反向
                         for (let j = shape.cols - 1; j > -1; j--) {
                             let seat = {
-                                seatId: seatIdStart++,
+                                seatId: shape.shapeId + seatIdStart++,
                                 status: 0,
                                 rowString: shape.startRow + i,
                                 colString: shape.startCol + j,
@@ -1051,7 +1075,7 @@ export default {
                 this.position.left = position.left;
             }
         },
-        warpInit(center) {
+        warpInit() {
             contentWarp = this.$refs.content;
 
             this.cont.width = contentWarp.clientWidth || contentWarp.offsetWidth;
@@ -1218,6 +1242,7 @@ export default {
         seatIconInit() { //座位图标初始化
             this.seatIcon.iconShow = this.$refs.iconShow;
             this.seatIcon.iconChecked = this.$refs.iconChecked;
+            this.seatIcon.iconDraw = this.$refs.iconDraw;
         },
         //座位信息 end
         judgePageActive() { //判断当前页面是否是激活状态

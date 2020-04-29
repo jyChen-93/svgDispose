@@ -1,6 +1,7 @@
 <template lang="pug">
 div.warp
 	button.toggle(@click="toggleAction") toggle
+	button.toggle.two(@click="clearAction") clearAction
 	seat-map(v-if="showInMap")
 	seat-seat(v-if="!showInMap")
 </template>
@@ -30,6 +31,9 @@ export default {
         toggleAction() {
             this.showInMap = !this.showInMap
             localStorage.setItem("showInMap", this.showInMap)
+        },
+        clearAction() {
+            localStorage.removeItem("shapeList")
         }
     }
 };
@@ -46,5 +50,8 @@ export default {
     z-index: 2;
     padding: 10px;
     border: 1px solid;
+    &.two {
+        left: 100px;
+    }
 }
 </style>
